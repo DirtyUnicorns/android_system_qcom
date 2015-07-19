@@ -39,8 +39,8 @@ typedef unsigned char      u8;
 typedef char               s8;
 typedef unsigned short int u16;
 typedef signed short int   s16;
-typedef unsigned long int  u32;
-typedef signed long int    s32;
+typedef unsigned int       u32;
+typedef signed int         s32;
 
 /** Success and error messages */
 #define SUCCESS                     "success"
@@ -99,19 +99,19 @@ enum error_val {
 #define DEFAULT_ACCEPT_LIST_FILE_PATH "/system/etc/hostapd/hostapd.accept"
 
 /** Accept list file name */
-#define ACCEPT_LIST_FILE "/data/hostapd/hostapd.accept"
+#define ACCEPT_LIST_FILE "/data/misc/wifi/hostapd.accept"
 
 /** Default Deny list file name */
 #define DEFAULT_DENY_LIST_FILE_PATH "/system/etc/hostapd/hostapd.deny"
 
 /** Deny list file name */
-#define DENY_LIST_FILE "/data/hostapd/hostapd.deny"
+#define DENY_LIST_FILE "/data/misc/wifi/hostapd.deny"
 
 /** Default Ini file */
 #define DEFAULT_INI_FILE "/persist/qcom/softap/qcom_cfg_default.ini"
 
 /** SDK control interface path */
-#define SDK_CTRL_IF "/data/hostapd/softap_sdk_ctrl"
+#define SDK_CTRL_IF "/data/misc/wifi/softap_sdk_ctrl"
 
 /** Maximum length of the line in the configuration file */
 #define MAX_CONF_LINE_LEN  (156)
@@ -325,6 +325,7 @@ typedef enum esap_cmd {
     eCMD_GET_AUTO_CHANNEL    = 63,
     eCMD_IEEE80211W          = 64,
     eCMD_WPA_KEY_MGMT        = 65,
+    eCMD_SET_MAX_CLIENTS     = 66,
 
     eCMD_LAST     /** New command numbers should be added above this */
 } esap_cmd_t;
