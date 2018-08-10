@@ -43,7 +43,7 @@ static int    rtnl_fd = -1;
 static char   evt_buf[MAX_EVT_BUF_SIZE];
 static int    evt_len;
 
-static void softap_handle_custom_event(char * buf, int len)
+static void softap_handle_custom_event(char * buf, int len __unused)
 {
     if (strncmp(buf, "AUTO-SHUT.indication ", strlen("AUTO-SHUT.indication ")) == 0)
     {
@@ -272,7 +272,7 @@ static int softap_rtnl_open(void)
 
 JNIEXPORT void JNICALL
     Java_com_qualcomm_wifi_softap_QWiFiSoftApCfg_SapCloseNetlink
-                        (JNIEnv *env, jobject obj)
+                        (JNIEnv *env __unused, jobject obj __unused)
 {
     softap_rtnl_close();
     return;
@@ -280,7 +280,7 @@ JNIEXPORT void JNICALL
 
 JNIEXPORT jstring JNICALL
     Java_com_qualcomm_wifi_softap_QWiFiSoftApCfg_SapWaitForEvent
-                        (JNIEnv *env, jobject obj)
+                        (JNIEnv *env, jobject obj __unused)
 {
     int    ret;
 
@@ -296,7 +296,7 @@ JNIEXPORT jstring JNICALL
 
 JNIEXPORT jboolean JNICALL
     Java_com_qualcomm_wifi_softap_QWiFiSoftApCfg_SapOpenNetlink
-                        (JNIEnv *env, jobject obj)
+                        (JNIEnv *env __unused, jobject obj __unused)
 {
     if (softap_rtnl_open() != 0) {
         ALOGD("Netlink Open Fail");
@@ -308,7 +308,7 @@ JNIEXPORT jboolean JNICALL
 
 JNIEXPORT jstring JNICALL
         Java_com_qualcomm_wifi_softap_QWiFiSoftApCfg_SapSendCommand
-                (JNIEnv *env, jobject obj, jstring jcmd)
+                (JNIEnv *env, jobject obj __unused, jstring jcmd)
 {
     const char *pcmd;
     char       cmd[MAX_CMD_SIZE];
