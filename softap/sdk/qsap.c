@@ -58,6 +58,8 @@
 
 #include <sys/system_properties.h>
 
+#include <unistd.h>
+
 #ifndef WIFI_DRIVER_MODULE_PATH
 #define WIFI_DRIVER_MODULE_PATH         "/system/lib/modules/wlan.ko"
 #endif
