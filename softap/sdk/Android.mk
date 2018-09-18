@@ -10,13 +10,16 @@ LOCAL_MODULE:= libqsap_sdk
 
 LOCAL_MODULE_TAGS := optional
 
+ifeq ($(PRODUCT_VENDOR_MOVE_ENABLED), true)
+LOCAL_VENDOR_MODULE := true
+endif
+
 LOCAL_CFLAGS += -DSDK_VERSION=\"0.0.1.0\"
 
 LOCAL_USE_VNDK := true
 
-LOCAL_COPY_HEADERS_TO := sdk/softap/include
-LOCAL_COPY_HEADERS := qsap_api.h
-LOCAL_COPY_HEADERS += qsap.h
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/qsap_api.h \
+                               $(LOCAL_PATH)/qsap.h
 
 ifdef WIFI_DRIVER_MODULE_PATH
 LOCAL_CFLAGS += -DWIFI_DRIVER_MODULE_PATH=\"$(WIFI_DRIVER_MODULE_PATH)\"
@@ -69,5 +72,12 @@ LOCAL_SHARED_LIBRARIES := libnetutils libutils libbinder libcutils libhardware_l
 
 LOCAL_VENDOR_MODULE := true
 
+LOCAL_HEADER_LIBRARIES := libcutils_headers
+
 include $(BUILD_SHARED_LIBRARY)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := libqsap_headers
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)
+LOCAL_VENDOR_MODULE := true
+include $(BUILD_HEADER_LIBRARY)

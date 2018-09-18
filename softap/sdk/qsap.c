@@ -34,6 +34,8 @@
 #include <sched.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <sched.h>
 
 #include <sys/socket.h>
 #include <linux/if.h>
@@ -47,11 +49,12 @@
 
 #define LOG_TAG "QCLDR-"
 
-#include "log/log.h"
-#include "cutils/memory.h"
-#include "cutils/misc.h"
-#include "cutils/properties.h"
-#include "cutils/android_filesystem_config.h"
+#include <cutils/log.h>
+#include <cutils/memory.h>
+#include <cutils/misc.h>
+#include <cutils/properties.h>
+#include <grp.h>
+#include <pwd.h>
 
 #include "qsap_api.h"
 #include "qsap.h"
@@ -82,7 +85,7 @@
 #endif
 
 
-#ifndef WIFI_SDIO_IF_DRIVER_MODULE_ARG 
+#ifndef WIFI_SDIO_IF_DRIVER_MODULE_ARG
 #define WIFI_SDIO_IF_DRIVER_MODULE_ARG  ""
 #endif
 
@@ -243,7 +246,7 @@ s32 wifi_qsap_load_driver(void)
     }
 
     sched_yield();
-    
+
 	ret = eSUCCESS;
 
 end:
@@ -603,6 +606,8 @@ int wigig_ensure_entropy_file_exists()
 {
     int ret;
     int destfd;
+    struct passwd *pw;
+    struct group *gr;
 
     ret = access(WIGIG_ENTROPY_FILE, R_OK|W_OK);
     if ((ret == 0) || (errno == EACCES)) {
@@ -634,9 +639,17 @@ int wigig_ensure_entropy_file_exists()
         return -1;
     }
 
-    if (chown(WIGIG_ENTROPY_FILE, AID_SYSTEM, AID_WIFI) < 0) {
-        ALOGE("Error changing group ownership of %s to %d: %s",
-              WIGIG_ENTROPY_FILE, AID_WIFI, strerror(errno));
+    pw = getpwnam("system");
+    gr = getgrnam("wifi");
+    if (pw && gr) {
+        if (chown(WIGIG_ENTROPY_FILE, pw->pw_uid, gr->gr_gid) < 0) {
+            ALOGE("Error changing group ownership of %s to %d: %s",
+                  WIGIG_ENTROPY_FILE, gr->gr_gid, strerror(errno));
+            unlink(WIGIG_ENTROPY_FILE);
+            return -1;
+        }
+    } else {
+        ALOGE("Cannot get pw_uid or gr_gid : %s", strerror(errno));
         unlink(WIGIG_ENTROPY_FILE);
         return -1;
     }
