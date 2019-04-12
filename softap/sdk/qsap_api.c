@@ -90,7 +90,8 @@ s8 *Cmd_req[eCMD_REQ_LAST] = {
   */
 s8 *Conf_req[CONF_REQ_LAST] = {
     "dual2g",
-    "dual5g"
+    "dual5g",
+    "owe"
 };
 
 /*
@@ -182,6 +183,12 @@ static struct Command cmd_list[eCMD_LAST] = {
     { "vendor_elements",       NULL             },
     { "assocresp_elements",    NULL             },
     { "acs_exclude_dfs",       NULL             },
+    { "wowlan_triggers",       "any"            },
+    { "accept_mac_file",       NULL             },
+    { "deny_mac_file",         NULL             },
+    { "owe_transition_ifname", NULL             },
+    { "sae_require_mfp",       NULL             },
+
 };
 
 struct Command qsap_str[eSTR_LAST] = {
@@ -1912,6 +1919,7 @@ static esap_cmd_t qsap_get_cmd_num(s8 *cName)
 
     for(i=0; i<eCMD_LAST; i++)     {
         len = strlen(cmd_list[i].name);
+
         if(!strncmp(cmd_list[i].name, cName, len)) {
             if((cName[len] == '=') || (cName[len] == '\0'))
                 return i;
@@ -2594,6 +2602,9 @@ static void qsap_handle_set_request(s8 *pcmd, s8 *presp, u32 *plen)
     } else if (!(strncmp(pcmd, Conf_req[CONF_5g], strlen(Conf_req[CONF_5g])))) {
            pcmd += strlen(Conf_req[CONF_5g]);
            SKIP_BLANK_SPACE(pcmd);
+    } else if (!(strncmp(pcmd, Conf_req[CONF_owe], strlen(Conf_req[CONF_owe])))) {
+           pcmd += strlen(Conf_req[CONF_owe]);
+           SKIP_BLANK_SPACE(pcmd);
     } else {
 	    // DO NOTHING
     }
@@ -3168,14 +3179,14 @@ void qsap_hostd_exec_cmd(s8 *pcmd, s8 *presp, u32 *plen)
            pconffile = CONFIG_FILE_2G;
        } else if (!(strncmp(pcmd+4, Conf_req[CONF_5g], strlen(Conf_req[CONF_5g])))) {
            pconffile = CONFIG_FILE_5G;
+       } else if (!(strncmp(pcmd+4, Conf_req[CONF_owe], strlen(Conf_req[CONF_owe])))) {
+           pconffile = CONFIG_FILE_OWE;
        } else {
            pconffile = CONFIG_FILE;
        }
     }
 
     check_for_configuration_files();
-    if(fIni == NULL)
-        qsap_set_ini_filename();
 
     if(!strncmp(pcmd, Cmd_req[eCMD_GET], strlen(Cmd_req[eCMD_GET])) && isblank(pcmd[strlen(Cmd_req[eCMD_GET])])) {
         qsap_handle_get_request(pcmd, presp, plen);
@@ -3229,7 +3240,9 @@ int qsapsetSoftap(int argc, char *argv[])
     }
 
     // check if 2nd arg is dual2g/dual5g
-    if (argc > 2 && (strncmp(argv[2], Conf_req[CONF_2g], 4) == 0)) {
+    if (argc > 2
+         && (strncmp(argv[2], Conf_req[CONF_2g], 4) == 0
+             || strncmp(argv[2], Conf_req[CONF_owe], 3) == 0)) {
             snprintf(setCmd, SET_BUF_LEN, "set %s", argv[2]);
             offset = 1;
             argc--;
