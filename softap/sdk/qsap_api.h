@@ -91,6 +91,7 @@ enum error_val {
 /** Configuration file name for SAP+SAP*/
 #define CONFIG_FILE_2G "/data/vendor/wifi/hostapd/hostapd_dual2g.conf"
 #define CONFIG_FILE_5G "/data/vendor/wifi/hostapd/hostapd_dual5g.conf"
+#define CONFIG_FILE_60G "/data/vendor/wifi/hostapd/hostapd_60g.conf"
 
 /** Configuration file name for OWE-transition */
 #define CONFIG_FILE_OWE "/data/vendor/wifi/hostapd/hostapd_owe.conf"
@@ -256,6 +257,7 @@ enum eConf_req {
     CONF_2g = 0,
     CONF_5g = 1,
     CONF_owe = 2,
+    CONF_60g = 3,
 
     CONF_REQ_LAST
 };
@@ -361,6 +363,11 @@ typedef enum esap_cmd {
     eCMD_OWE_TRANS_IFNAME    = 83,
     eCMD_SAE_REQUIRE_MPF     = 84,
 
+    eCMD_IEEE80211AX         = 85,
+
+    eCMD_ENABLE_EDMG         = 86,
+    eCMD_EDMG_CHANNEL        = 87,
+
     eCMD_LAST     /** New command numbers should be added above this */
 } esap_cmd_t;
 
@@ -425,6 +432,7 @@ enum oper_mode {
     HW_MODE_N_ONLY = 4,
     HW_MODE_A = 5,
     HW_MODE_ANY = 6,
+    HW_MODE_AD = 7,
 
     HW_MODE_UNKNOWN
 };
@@ -535,7 +543,7 @@ typedef struct sap_auto_channel_info {
 
 /** Validate the pairwise encryption */
 #define IS_VALID_PAIRWISE(x) (((!strcmp(x, "TKIP")) || (!strcmp(x, "CCMP")) || \
-                    (!strcmp(x, "TKIP CCMP")) || (!strcmp(x, "CCMP TKIP"))) ? TRUE : FALSE)
+                    (!strcmp(x, "TKIP CCMP")) || (!strcmp(x, "CCMP TKIP")) || (!strcmp(x, "GCMP"))) ? TRUE : FALSE)
 
 /** Validate the WMM status */
 #define IS_VALID_WMM_STATE(x) (((x >= WMM_AUTO_IN_INI) && (x <= WMM_DISABLED_IN_INI)) ? TRUE: FALSE)
